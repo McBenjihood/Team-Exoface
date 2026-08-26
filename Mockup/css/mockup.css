@@ -1,0 +1,869 @@
+/* =========================================================
+   Cloud-Computer - Mockup
+   Team Fonte-Tavina / IPT8.1
+
+   Aufbau nach dem Wireframe:
+   - Modul-Boxen zum Aufklappen (Lehrer und Schueler)
+   - Lernende als Akkordeon statt eigener Unterseite
+   - VM-Detail mit Konsole, fuer beide Rollen dieselbe Seite
+
+   Wer Farben aendern will, aendert nur die zwei Bloecke ganz oben.
+   ========================================================= */
+
+/* Dunkel = Standard */
+:root {
+    --bg: #181818;
+    --surface: #222222;
+    --surface-2: #2b2b2b;
+    --border: #333333;
+    --hover: #343434;
+    --text: #ffffff;
+    --muted: #9b9b9b;
+    --accent: #ab9ff2;
+    --accent-hover: #9887f0;
+    --on-accent: #181818;
+    --ok: #21c87a;
+    --warn: #e0a33e;
+    --dot-off: #5a5a5a;
+    --danger: #eb3742;
+    --radius: 16px;
+
+    /* Die Konsole bleibt in beiden Themes dunkel - ein Terminal ist dunkel. */
+    --term-bg: #0d0d0d;
+    --term-text: #d5d5d5;
+}
+
+/* Hell */
+:root[data-theme="light"] {
+    --bg: #f6f6f8;
+    --surface: #ffffff;
+    --surface-2: #f1f1f4;
+    --border: #e2e2e7;
+    --hover: #e9e9ee;
+    --text: #1a1a1f;
+    --muted: #6c6c78;
+    --accent: #9585ee;
+    --accent-hover: #8271e8;
+    --on-accent: #ffffff;
+    --ok: #16a34a;
+    --warn: #c2760c;
+    --dot-off: #b6b6bf;
+    --danger: #dc2626;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: "Inter", system-ui, "Segoe UI", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+/* =========================================================
+   Rollen-Sichtbarkeit
+
+   vm.html wird von beiden Rollen benutzt. Ueber ?rolle=schueler
+   in der Adresse setzt ein kleines Script data-rolle auf <html>,
+   und diese zwei Regeln blenden das Passende aus.
+   ========================================================= */
+
+:root[data-rolle="schueler"] .nur-lehrer {
+    display: none !important;
+}
+
+:root:not([data-rolle="schueler"]) .nur-schueler {
+    display: none !important;
+}
+
+/* =========================================================
+   Topbar
+   ========================================================= */
+
+.topbar {
+    border-bottom: 1px solid var(--border);
+    padding: 14px 24px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-wrap: wrap;
+}
+
+.brand {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text);
+    text-decoration: none;
+}
+
+.switch {
+    display: flex;
+    gap: 4px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 4px;
+}
+
+.switch a {
+    padding: 6px 14px;
+    border-radius: 999px;
+    font-size: 13px;
+    color: var(--muted);
+    text-decoration: none;
+}
+
+.switch a.on {
+    background: var(--surface-2);
+    color: var(--text);
+}
+
+.spacer {
+    margin-left: auto;
+}
+
+/* Hell / Dunkel - der Button zeigt immer die Aktion, nicht den Zustand */
+
+.theme-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 7px 14px;
+    font-family: inherit;
+    font-size: 13px;
+    color: var(--text);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    cursor: pointer;
+}
+
+.theme-btn:hover {
+    background: var(--surface-2);
+}
+
+.theme-btn .moon,
+:root[data-theme="light"] .theme-btn .sun {
+    display: none;
+}
+
+:root[data-theme="light"] .theme-btn .moon {
+    display: block;
+}
+
+/* =========================================================
+   Konto-Menue (der Kreis oben rechts im Wireframe)
+   ========================================================= */
+
+.account {
+    position: relative;
+}
+
+.avatar {
+    width: 36px;
+    height: 36px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-family: inherit;
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--text);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.avatar:hover {
+    background: var(--hover);
+}
+
+.account.open .avatar {
+    border-color: var(--accent);
+}
+
+.menu {
+    display: none;
+    position: absolute;
+    right: 0;
+    top: 46px;
+    min-width: 210px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 6px;
+    z-index: 20;
+    box-shadow: 0 12px 34px rgba(0, 0, 0, 0.35);
+}
+
+.account.open .menu {
+    display: block;
+}
+
+.menu-kopf {
+    padding: 10px 12px 12px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 6px;
+}
+
+.menu-name {
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.menu button,
+.menu a {
+    display: block;
+    width: 100%;
+    text-align: left;
+    padding: 9px 12px;
+    font-family: inherit;
+    font-size: 13px;
+    color: var(--text);
+    background: transparent;
+    border: 0;
+    border-radius: 8px;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.menu button:hover,
+.menu a:hover {
+    background: var(--hover);
+}
+
+.menu .rot:hover {
+    color: var(--danger);
+}
+
+/* =========================================================
+   Seite
+   ========================================================= */
+
+.page {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 40px 24px 80px;
+}
+
+h1 {
+    font-size: 23px;
+    font-weight: 600;
+}
+
+.sub {
+    color: var(--muted);
+    font-size: 14px;
+    margin-top: 6px;
+}
+
+.topactions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin: 22px 0 32px;
+}
+
+/* Kopfzeile mit Zurueck-Pfeil und Brotkrumen (klasse.html, vm.html) */
+
+.pagehead {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 8px;
+}
+
+.back-icon {
+    width: 34px;
+    height: 34px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--muted);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    text-decoration: none;
+    flex-shrink: 0;
+}
+
+.back-icon:hover {
+    background: var(--hover);
+    color: var(--text);
+}
+
+.chip {
+    display: inline-flex;
+    align-items: center;
+    padding: 8px 14px;
+    font-size: 14px;
+    font-weight: 500;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+}
+
+.crumb {
+    font-size: 14px;
+    color: var(--muted);
+}
+
+/* =========================================================
+   Buttons
+   ========================================================= */
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 18px;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.btn:hover {
+    background: var(--hover);
+}
+
+.btn-primary {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: var(--on-accent);
+}
+
+.btn-primary:hover {
+    background: var(--accent-hover);
+    border-color: var(--accent-hover);
+}
+
+.btn-mini {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 7px 14px;
+    font-family: inherit;
+    font-size: 13px;
+    color: var(--text);
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    text-decoration: none;
+    white-space: nowrap;
+    cursor: pointer;
+}
+
+.btn-mini:hover {
+    background: var(--hover);
+}
+
+.btn.rot:hover,
+.btn-mini.rot:hover {
+    color: var(--danger);
+    border-color: var(--danger);
+}
+
+.btn:disabled,
+.btn-mini:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+
+.btn:disabled:hover {
+    background: var(--surface);
+}
+
+.btn-mini:disabled:hover {
+    background: var(--surface-2);
+}
+
+.btnrow {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 14px;
+}
+
+/* =========================================================
+   Modul-Boxen - untereinander, volle Breite
+   ========================================================= */
+
+.stack {
+    display: grid;
+    gap: 16px;
+}
+
+.modul {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+}
+
+.modul-head {
+    padding: 18px 22px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    cursor: pointer;
+    user-select: none;
+}
+
+.modul-head:hover {
+    background: var(--hover);
+    border-radius: var(--radius);
+}
+
+.modul.open .modul-head {
+    border-bottom: 1px solid var(--border);
+    border-radius: var(--radius) var(--radius) 0 0;
+}
+
+.modul-head .code {
+    display: inline-flex;
+    align-items: center;
+    padding: 7px 13px;
+    font-size: 15px;
+    font-weight: 600;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 9px;
+    flex-shrink: 0;
+}
+
+.modul-head .fach {
+    font-size: 13.5px;
+    color: var(--muted);
+}
+
+.modul-head .rechts {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.chev {
+    color: var(--muted);
+    flex-shrink: 0;
+    transition: transform 0.2s ease;
+}
+
+.modul.open > .modul-head .chev {
+    transform: rotate(180deg);
+}
+
+.modul-body {
+    display: none;
+}
+
+.modul.open .modul-body {
+    display: block;
+}
+
+/* Bei den Lernenden ist der aufgeklappte Bereich eine Zeile:
+   Werte links, Buttons rechts. Siehe .vm-inhalt weiter unten. */
+
+.modul.open .modul-body.vm-inhalt {
+    display: flex;
+}
+
+.modul-foot {
+    padding: 16px 22px;
+    border-top: 1px solid var(--border);
+}
+
+/* =========================================================
+   Klassen-Raster in der Modul-Box (zwei Spalten)
+   ========================================================= */
+
+.klassen {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    padding: 16px 22px;
+}
+
+.kachel {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 16px;
+    color: var(--text);
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    text-decoration: none;
+}
+
+.kachel:hover {
+    background: var(--hover);
+}
+
+.kachel .klasse-name {
+    flex: 1;
+    font-size: 14px;
+    min-width: 0;
+}
+
+/* =========================================================
+   Akkordeon der Lernenden (klasse.html)
+   ========================================================= */
+
+.acc-liste {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+}
+
+.acc + .acc {
+    border-top: 1px solid var(--border);
+}
+
+.acc-head {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px 22px;
+    cursor: pointer;
+    user-select: none;
+}
+
+.acc-head:hover {
+    background: var(--hover);
+}
+
+.acc:first-child .acc-head {
+    border-radius: var(--radius) var(--radius) 0 0;
+}
+
+.acc:last-child:not(.open) .acc-head {
+    border-radius: 0 0 var(--radius) var(--radius);
+}
+
+.acc-head .klasse-name {
+    flex: 1;
+    min-width: 0;
+}
+
+.acc-head .status {
+    min-width: 86px;
+}
+
+.acc.open .chev {
+    transform: rotate(180deg);
+}
+
+.acc-body {
+    display: none;
+    border-top: 1px solid var(--border);
+    background: var(--bg);
+}
+
+.acc:last-child .acc-body {
+    border-radius: 0 0 var(--radius) var(--radius);
+}
+
+.acc.open .acc-body {
+    display: flex;
+}
+
+/* =========================================================
+   Aufgeklappter VM-Bereich
+
+   Gleich aufgebaut bei Lehrperson und Lernenden: Werte links,
+   Buttons rechts. Ein Klick irgendwo in die Flaeche fuehrt zur
+   Konsole - ausser auf einen der Buttons, die machen ihr Eigenes.
+   ========================================================= */
+
+.vm-inhalt {
+    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: 20px;
+    padding: 20px 22px 22px;
+    cursor: pointer;
+}
+
+.vm-links {
+    flex: 1 1 340px;
+    min-width: 0;
+}
+
+.vm-rechts {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    flex-shrink: 0;
+}
+
+.vm-rechts > * {
+    width: 100%;
+}
+
+/* Weil die Flaeche selbst der Weg zur Konsole ist, steht das dort auch. */
+
+.hint {
+    font-size: 12.5px;
+    color: var(--muted);
+    margin-top: 14px;
+}
+
+/* =========================================================
+   Kurzwerte "belegt / total" (Akkordeon und Schuelerseite)
+   ========================================================= */
+
+.usage {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(148px, 1fr));
+    gap: 10px;
+    margin-top: 16px;
+}
+
+.ubox {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 14px;
+}
+
+.ubox .label {
+    font-size: 12px;
+    color: var(--muted);
+}
+
+.ubox .zahl {
+    font-size: 14px;
+    font-weight: 600;
+    margin-top: 4px;
+}
+
+.ubox .bar {
+    margin-top: 10px;
+}
+
+/* =========================================================
+   Grosse Werte-Karten (vm.html)
+   ========================================================= */
+
+.werte {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+    gap: 16px;
+    margin-bottom: 16px;
+}
+
+.wert {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 18px 22px;
+}
+
+.wert .label {
+    font-size: 13px;
+    color: var(--muted);
+}
+
+.wert .zahl {
+    font-size: 22px;
+    font-weight: 600;
+    margin-top: 6px;
+}
+
+/* Balken - ab 70 Prozent gelb, ab 90 Prozent rot */
+
+.bar {
+    height: 6px;
+    border-radius: 999px;
+    background: var(--surface-2);
+    margin-top: 14px;
+    overflow: hidden;
+}
+
+.bar span {
+    display: block;
+    height: 100%;
+    background: var(--accent);
+    transition: width 0.4s ease;
+}
+
+.bar.warn span {
+    background: var(--warn);
+}
+
+.bar.hot span {
+    background: var(--danger);
+}
+
+/* =========================================================
+   VM-Kopfzeile und Konsole (vm.html)
+   ========================================================= */
+
+.vmhead {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin: 24px 0 26px;
+}
+
+.vmbtns {
+    margin-left: auto;
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.konsole-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    margin-bottom: 16px;
+}
+
+.konsole-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+    padding: 14px 18px;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.konsole-bar .adresse {
+    font-size: 12.5px;
+    font-weight: 400;
+    color: var(--muted);
+}
+
+.konsole {
+    margin: 0;
+    padding: 18px;
+    background: var(--term-bg);
+    color: var(--term-text);
+    font-family: ui-monospace, "Cascadia Mono", "Consolas", "DejaVu Sans Mono", monospace;
+    font-size: 12.5px;
+    line-height: 1.7;
+    min-height: 260px;
+    max-height: 330px;
+    overflow: auto;
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+/* =========================================================
+   Kleinteile
+   ========================================================= */
+
+.block {
+    padding: 18px 22px;
+}
+
+.block + .block {
+    border-top: 1px solid var(--border);
+}
+
+.klasse-name {
+    font-size: 15px;
+    font-weight: 600;
+}
+
+.info {
+    font-size: 13px;
+    color: var(--muted);
+    margin-top: 4px;
+}
+
+.status {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 13px;
+    color: var(--muted);
+    white-space: nowrap;
+}
+
+.status .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--ok);
+    flex-shrink: 0;
+}
+
+.status.off .dot {
+    background: var(--dot-off);
+}
+
+.status.wait .dot {
+    background: var(--warn);
+}
+
+/* Zeile "Beschriftung links, Wert rechts" */
+
+.zeile {
+    display: flex;
+    justify-content: space-between;
+    gap: 14px;
+    padding: 15px 22px;
+    border-bottom: 1px solid var(--border);
+    font-size: 14px;
+}
+
+.zeile:last-child {
+    border-bottom: none;
+}
+
+.zeile .k {
+    color: var(--muted);
+}
+
+.pfeil {
+    color: var(--muted);
+    flex-shrink: 0;
+}
+
+/* =========================================================
+   Schmale Fenster
+   ========================================================= */
+
+@media (max-width: 640px) {
+    .klassen {
+        grid-template-columns: 1fr;
+    }
+
+    .vm-rechts {
+        flex-direction: row;
+        flex-wrap: wrap;
+    }
+
+    .vm-rechts > * {
+        width: auto;
+    }
+
+    .vmbtns {
+        margin-left: 0;
+        width: 100%;
+    }
+
+    .modul-head .fach {
+        display: none;
+    }
+}
