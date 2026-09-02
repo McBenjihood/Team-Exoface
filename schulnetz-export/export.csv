@@ -1,0 +1,6 @@
+﻿Name,Vorname,G,Profil,Zusatz,Klasse,B,PS,Strasse,PLZ,Ort,Telefon,Mobile,E-Mail,Geburtsdatum,Klassenamt,Lehrbetrieb,LB Strasse,LB PLZ,LB Ort,LB Telefon,Ausbildende Info
+Müller,Lukas,m,Applikationsentwicklung,,INF23A,,,Bahnhofstrasse 12,6003,Luzern,,791234567,lukas.mueller@example.ch,03-15-07,Klassensprecher,TechSolutions AG,Industriestrasse 8,6010,Kriens,413201111,Thomas Meier
+Schneider,Laura,f,Plattformentwicklung,,INF23A,,b,Dorfweg 5,6210,Sursee,,782345678,laura.schneider@example.ch,11-22-06,,NetCom GmbH,Hauptstrasse 44,6204,Sempach,414602233,Sandra Keller
+Wenger,Noah,m,Applikationsentwicklung,BMS,INF23B,,b,Seestrasse 18,6330,Cham,417403344,763456789,noah.wenger@example.ch,07-09-07,Kassenwart,CodeFactory AG,Zugerstrasse 30,6340,Baar,417613344,Pascal Huber
+Fischer,Sophie,f,Plattformentwicklung,,INF23B,,,Gartenweg 27,6020,Emmenbrücke,412804455,774567890,sophie.fischer@example.ch,05-28-06,,CloudNet AG,Reussbühlstrasse 90,6005,Luzern,412814455,Daniela Graf
+Keller,Jan,m,Applikationsentwicklung,,INF23C,,,Schulhausstrasse 9,6215,Beromünster,419325566,795678901,jan.keller@example.ch,01-18-07,Materialverantwortlicher,IT Systems AG,Gewerbestrasse 12,6252,Dagmersellen,627485566,Martin Brunner
