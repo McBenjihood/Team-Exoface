@@ -1,10 +1,10 @@
-# Team Exoface
+# Team ExoFace
 ## Dokumentinformationen
 
 | Feld | Wert |
 |---|---|
 | **Projektname** | Frontend für Cloud-Computer |
-| **Projekt** | Projekt 2 |
+| **Projekt** | Exoface |
 | **Auftraggeber** | Lagger Stefan |
 | **Datum** | 26.08.2026 |
 
@@ -22,6 +22,7 @@ Die Anwendung soll die Verwaltung von Lernenden, Klassen und deren VM's vereinfa
 
 - Das System verfügt über zwei Rollen: Lehrer und Schüler.
 - Lehrpersonen können Lernende über einen Schulnetz-Export erfassen.
+- Lehrpersonen können einzelne Lernende verwalten.
 - Lehrpersonen können VMs für ganze Klassen erstellen und löschen.
 - Schüler können ihre eigene VM zurücksetzen.
 - Lehrpersonen und Schüler können ihre VM starten und stoppen.
@@ -71,10 +72,10 @@ Die VMs werden nach Fach gruppiert dargestellt. Für die Zuordnung wird bei eine
 | **F005** |  Schüler können ihre eigene VM zurücksetzen. | Muss |
 | **F006** |  Schüler können einen SSH-Key bei ihrer VM hinterlegen. | Muss |
 | **F007** | VMs werden nach Fach gruppiert angezeigt. | Muss |
-| **F008** | Das System verwendet VM-Labels zur Zuordnung zu einem Fach. | Muss |
-| **F009** | Das System stellt eine Schnittstelle zur Exoscale-API bereit. | Muss |
-| **F010** | SSH-Keys können direkt über das Frontend generiert werden. | Kann |
+| **F008** | Das System stellt eine Schnittstelle zur Exoscale-API bereit. | Muss |
+| **F009** | SSH-Keys können direkt über das Frontend generiert werden. | Kann |
 | **F011** | Bash-/PowerShell-Terminal direkt im Frontend. | Kann |
+| **F012** | Registration & Schülerverwaltung | Muss |
 
 ## 3.2 F001 – VMs starten und stoppen
 
@@ -143,7 +144,7 @@ Lehrpersonen können die VMs einer ganzen Klasse löschen.
 - Ein Schüler kann einen SSH-Key für seine eigene VM hinterlegen.
 - Die Zuordnung des SSH-Keys zur VM wird im System gespeichert bzw. an die dafür vorgesehene Schnittstelle weitergegeben.
 
-## 3.8 F007 – VMs nach Fach gruppieren via Labe
+## 3.8 F007 – VMs nach Fach gruppieren
 
 **Beschreibung**
 
@@ -153,19 +154,9 @@ Die VMs werden im Frontend nach Fach gruppiert dargestellt.
 
 - VMs werden im Frontend nach dem zugehörigen Fach gruppiert angezeigt.
 - Die Gruppierung ist anhand der VM-Zuordnung nachvollziehbar.
+- Fach ist Via Label dargestellt
 
-## 3.9 F008 – Fach über VM-Label
-
-**Beschreibung**
-
-Für die Zuordnung einer VM zu einem Fach wird ein Label bei der VM verwendet.
-
-**Akzeptanzkriterien**
-
-- Eine VM kann ein Label für das entsprechende Fach besitzen.
-- Das Label kann zur Gruppierung der VMs verwendet werden.
-
-## 3.10 F009 – Exoscale-API
+## 3.10 F008 – Exoscale-API
 
 **Beschreibung**
 
@@ -178,21 +169,38 @@ Das System kommuniziert zur Verwaltung der VMs mit der Exoscale-API.
 
 
 
-## 3.11 F010 – SSH-Key-Generierung
+## 3.11 F009 – SSH-Key-Generierung
 
 **Beschreibung**
 
 Optional soll die Möglichkeit bestehen, SSH-Keys direkt über das Website-/Frontend-Interface zu generieren.
 
-**Priorität:** Kann
+**Akzeptanzkriterien**
 
-## 3.12 F011 – Bash-/PowerShell-Terminal
+- Die generation Funktioniert korrekt und kryptographisch sichere Schlüssel werden dem Nutzer bereitgestellt. 
+
+## 3.12 F010 – Bash-/PowerShell-Terminal
 
 **Beschreibung**
 
 Optional soll ein Bash- bzw. PowerShell-Terminal direkt im Frontend zur Verfügung gestellt werden.
 
-**Priorität:** Kann
+**Akzeptanzkriterien**
+
+- Nutzer kann sich per Exoscale API über eine Websocket mit einer Bash / Powershell Instanz verbinden
+
+## 3.10 F0011 – Registration & Schülerverwaltung
+
+**Beschreibung**
+
+Bei Erstellung von Nutzer-Account befindet sich der Account in einem provisorischen State. Wenn Nutzer auf Exoface zugreifen möchte, muss er zuerst den On-Boarding Prozess abschliessen. Dieser Prozess besteht aus einer E-Mail, welche der Nutzer erhält wenn ein Lehrer ihn zum 1. provisorisch im System registriert. Nach klicken auf URL in E-Mail, Nutzer sind dazu aufgefordert ein eigenes Passwort zu setzen und evtl. noch andere Details anzugeben.
+Lehrer können Schüler Accounts provisorisch erstellen, löschen und bearbeiten.
+
+**Akzeptanzkriterien**
+
+- Nutzer erhält E-mail mit On-Boarding Instructions.
+- Nach On-Boarding mit Passwortsetzung, wird der Account freigegeben fürs Login.
+- Lehrer können Schüler Accounts provisorisch erstellen, löschen und bearbeiten.
 
 ---
 
@@ -206,22 +214,21 @@ Optional soll ein Bash- bzw. PowerShell-Terminal direkt im Frontend zur Verfügu
 | **NF002** | Fehlerbehandlung bei fehlerhaften Vorgängen und Schnittstellenaufrufen. | Muss      |
 
 
-## 4.2 NF001 – Logging
+## 4.2 NF001 – Performance
 
 **Beschreibung**
 
-Relevante Systemvorgänge und Fehler sollen protokolliert werden, damit Vorgänge nachvollzogen und Fehler analysiert werden können.
+Nutzererfahrung wird nicht beinträchtigt durch Laufzeitdauer von z.B. Datenbankquerries oder API requests ans Backend.  
 
 **Akzeptanzkriterien**
 
-- Fehler werden protokolliert.
-- Relevante Systemvorgänge können anhand der Logs nachvollzogen werden.
+- Keine Ladedauer über 2 Sekunden bei Requests an unser Backend.
 
-## 4.3 NF002 – Error-Handling
+## 4.3 NF002 – Security
 
 **Beschreibung**
 
-Fehler innerhalb der Anwendung und bei der Kommunikation mit externen Schnittstellen sollen kontrolliert behandelt werden.
+Sensible Daten müssen alle verschlüsselt sein in der Datenbank, nach mehreren falschen Loginversuchen gibt es ein Login time-out
 
 **Akzeptanzkriterien**
 
@@ -229,11 +236,19 @@ Fehler innerhalb der Anwendung und bei der Kommunikation mit externen Schnittste
 - Benutzer erhalten bei fehlgeschlagenen Vorgängen eine geeignete Rückmeldung.
 
 
+
 ---
 
 # 5. Benutzeroberfläche
 
 ## 5.1 Wireframes / Mockups
+![Schueler Overview Ansicht](wireframes/Schueler_overview_ansicht.jpg)
+![Schueler Dashboard](wireframes/Schueler_Dashboard.jpg)
+![Lehrer Modul Ansicht](wireframes/Lehrer_modul_Ansicht.jpg)
+![Lehrer Klassen Ansicht](wireframes/Lehrer_klassen_ansicht.jpg)
+![Lehrer Dashboard](wireframes/Lehrer_dashboard.jpg)
+
+Mockup: https://github.com/McBenjihood/Team-Exoface/tree/main/Mockup
 
 ---
 
@@ -243,8 +258,11 @@ Fehler innerhalb der Anwendung und bei der Kommunikation mit externen Schnittste
 
 | Meilenstein             | Termin |
 | ----------------------- | ------ |
-| Analyse abgeschlossen   | ?      |
-| Umsetzung abgeschlossen | ?      |
-| Test abgeschlossen      | ?      |
-| Abnahme                 | ?      |
+| Analyse abgeschlossen   | 09.09.26|
+| Sprint 1   | 14.10.26|
+| Sprint 2   | 18.11.26|
+| Umsetzung abgeschlossen | 16.12.26|
+| Test abgeschlossen      | 13.01.27|
+| Sprint 3   | 13.01.27|
+| Abnahme                 | 20.01.27|
 
