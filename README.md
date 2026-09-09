@@ -143,7 +143,7 @@ Lehrpersonen können die VMs einer ganzen Klasse löschen.
 - Ein Schüler kann einen SSH-Key für seine eigene VM hinterlegen.
 - Die Zuordnung des SSH-Keys zur VM wird im System gespeichert bzw. an die dafür vorgesehene Schnittstelle weitergegeben.
 
-## 3.8 F007 – VMs nach Fach gruppieren
+## 3.8 F007 – VMs nach Fach gruppieren via Labe
 
 **Beschreibung**
 
